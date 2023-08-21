@@ -1,0 +1,126 @@
+<style>
+  .image_recom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.image_recom img {
+    margin: 10px;
+    max-width: 450px;
+    max-height: 450px;
+}
+.p {
+  font-size: 4px;
+}
+</style>
+
+
+{% extends "indexbase.html" %}
+
+{% set pagetitle="Slide Search" %}
+{% set pagedesc="Demo of Embedding Search" %}
+
+{% block addstyle %}
+input[type="radio"], .tab-pane { display: none; }
+{% for itm in data.results %}
+#{{itm}}:checked ~ .tab-content > .content-{{itm}},
+{% endfor %}
+#doc:checked ~ .tab-content > .content-doc { display: block; }
+{% endblock %}
+
+
+{% block addbody %}
+<section class="section">
+  <form method="post" id="sform" action="/abbvie_aa_nsm_with_keysearch_v1">
+    <div class="grid-2">
+      <div>
+        <div class="container is-fluid">
+          <textarea class="textarea" form="sform" id="query" name="query"
+            placeholder="Text Here">{{data.qry}}</textarea>
+        </div>
+      </div>
+      <div>
+        <div class="container is-fluid">
+          {% for itm in data.foptions %}
+          <label class="checkbox">
+            <input type="checkbox" name="{{itm[0]}}" value="1" {{itm[2]}}>
+            {{itm[1]}}
+          </label>
+          {% endfor %}
+          <br />
+          <div class="field is-grouped is-grouped-right">
+            <p class="control"> <input class="button is-primary" type="submit" value="Submit"></p>
+            &nbsp;&nbsp;
+            <p class="control"> <input class="button is-light" type="reset" value="Reset"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</section>
+{% if 'errormsg' in data %}
+<section class="section">
+  <div class="notification is-danger is-light">
+    {{data.errormsg}}
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="grid-2">
+    <div>
+      <div class="container is-fluid">
+        <!-- Nav tabs -->
+        {% for itm in data.results %}
+        <input type="radio" id="{{ itm }}" name="nav-tab">
+        {% endfor %}
+        <div class="tabs">
+          <ul>
+            {% for itm in data.results %}
+            <li><label for="{{ itm }}"><a><b>{{data.lookup[itm]}}</b></a></label></li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="tab-content">
+          {% for itm in data.results %}
+          <div class="tab-pane content-{{ itm }}">
+            <ul class="list">
+              {% for id,image_url,score,key_emb  in data.results[itm].col %}
+              <li><a href="#" onclick="showImage('{{ image_url }}')">{{ id,image_url,score }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="container is-fluid">
+
+        <div class="container is-fluid" id="image-container"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<p style="font-size: 24px; font-weight: bold;"> Top  recommended slides</p>
+<br>
+<div id ="recom_img" class="image_recom">
+  {% for itm in data.results %}
+    {% for id,image_url,score,emb_type  in data.results[itm].col %}
+          <p>
+            {{score, emb_type}}
+          </p>
+          <img src="{{ url_for('static', filename=image_url) }}" alt="Image">
+
+        {% endfor %}
+        {% endfor %}
+</div>
+
+<script>
+  function showImage(image_url) {
+    var imageSrc = "{{ url_for('static', filename='abbvie_aa_nsm/') }}" + image_url + ".png";
+    var image = "<img src='" + imageSrc + "' alt='" + image_url + "'>";
+    document.getElementById("image-container").innerHTML = image;
+  }
+</script>
+{% endblock %}

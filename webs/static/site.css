@@ -1,0 +1,40 @@
+.visual {
+    font-weight: 600;
+    color: rgb(194, 146, 84);
+}
+
+.keyword {
+    font-weight: 600;
+    color: rgb(165, 89, 46);
+}
+
+.diagram {
+    font-weight: 600;
+    color: rgb(129, 40, 40);
+}
+
+.match {
+    font-weight: 600;
+    color: rgb(233, 10, 10);
+}
+.center {
+    background: rgb(34, 5, 5);
+    color: white;
+    border-radius: 2em;
+    padding: 6em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+  }
+.image_recom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.image_recom img {
+    margin: 10px;
+    max-width: 100px;
+    max-height: 100px;
+}
